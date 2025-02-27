@@ -1,31 +1,32 @@
 import axios from "axios"
 const url_base = "http://127.0.0.1:8000/api"
 
-export const http =()=>{
+export const http = () => {
 
-    let token= localStorage.getItem("access_token")
+    let token = localStorage.getItem("access_token")
+
     const api = axios.create({
         baseURL: url_base,
-        headers:{
-            'Accept':'application/json',
-            'Authorization': 'Bearer '+token
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + token
         }
     })
     // interceptar errores 401 No autenticado , 403 No autorizado
     api.interceptors.response.use(
-        (response)=>{
+        (response) => {
             return response;
 
         },
-        (error)=>{
-            if(error.response.status ===401){
+        (error) => {
+            if (error.response.status === 401) {
                 localStorage.removeItem("access_token");
-                window.location="/login"
+                window.location = "/login"
             }
-            if(error.response.status ===403){
+            if (error.response.status === 403) {
                 // roles
             }
-            
+
             return Promise.reject(error)
         }
     )

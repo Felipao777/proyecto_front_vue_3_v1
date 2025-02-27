@@ -17,13 +17,34 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
+      meta: { requireAuth: true }
     },
     {
       path: '/login',
       //name: 'home',
+      name:'login',
       component: VistaLogin,
+      meta: { redirectIfAuth: true }
     },
   ],
 })
+// Guard guardia de seguridad para protejer las rutas seria un middleware
+
+router.beforeEach((to, from, next) => {
+  let token = localStorage.getItem("access_token")
+  //console.log(to)   lo borramos xq esta mostrando mucha inform de rutas 
+  if (to.meta.requireAuth) {
+    if (!token)
+      return next({ name: 'login' });
+    return next()
+  }
+
+  if (to.meta.redirectIfAuth && token) {
+    return next({ name: 'about' })
+  }
+
+  return next()
+})
+
 
 export default router
